@@ -5,278 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>대기대순환 시뮬레이터</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a2e;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
-            color: white;
-            padding: 20px 40px;
-            border-bottom: 3px solid #2c3e50;
-        }
-        
-        .header h1 {
-            font-size: 2em;
-            margin: 0;
-        }
-        
-        .header p {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-        
-        .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-        
-        .earth-viewer {
-            flex: 1;
-            position: relative;
-            background: #000814;
-        }
-        
-        #canvas-container {
-            width: 100%;
-            height: 100%;
-        }
-        
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 1.2em;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px 40px;
-            border-radius: 10px;
-        }
-        
-        .sidebar {
-            width: 380px;
-            background: #f8f9fa;
-            overflow-y: auto;
-            padding: 20px;
-            border-left: 2px solid #cbd5e0;
-        }
-        
-        .control-section {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .control-section h3 {
-            font-size: 1.1em;
-            margin-bottom: 15px;
-            color: #1a2332;
-            border-bottom: 2px solid #2c5282;
-            padding-bottom: 8px;
-        }
-        
-        .control-group {
-            margin-bottom: 15px;
-        }
-        
-        .control-group:last-child {
-            margin-bottom: 0;
-        }
-        
-        .control-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #2c3e50;
-            font-size: 0.9em;
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            flex: 1;
-            min-width: 100px;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .btn-primary {
-            background: #2c5282;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2a4365;
-        }
-        
-        .btn-secondary {
-            background: #4a5568;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #2d3748;
-        }
-        
-        .btn-success {
-            background: #2d5f8d;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #1e4266;
-        }
-        
-        .btn-active {
-            background: #c53030;
-        }
-        
-        .btn-active:hover {
-            background: #9b2c2c;
-        }
-        
-        .slider-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .slider-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        input[type="range"] {
-            flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: #cbd5e0;
-            outline: none;
-            -webkit-appearance: none;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #2c5282;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb:hover {
-            background: #2a4365;
-            transform: scale(1.2);
-        }
-        
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #2c5282;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .month-display {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #2c5282;
-            min-width: 60px;
-            text-align: center;
-        }
-        
-        input[type="number"] {
-            padding: 8px;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px;
-            font-size: 0.9em;
-            width: 70px;
-            text-align: center;
-        }
-        
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #2c5282;
-        }
-        
-        .month-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8em;
-            color: #4a5568;
-            margin-top: 5px;
-        }
-        
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .info-item:last-child {
-            border-bottom: none;
-        }
-        
-        .info-item strong {
-            color: #2c3e50;
-        }
-        
-        .info-item span {
-            color: #4a5568;
-            font-weight: 600;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-        }
-        
-        .legend-color {
-            width: 30px;
-            height: 20px;
-            border-radius: 4px;
-            margin-right: 10px;
-        }
-        
-        .legend-item span {
-            font-size: 0.85em;
-            color: #2c3e50;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%); color: white; padding: 15px 30px; border-bottom: 3px solid #2c3e50; }
+        .header h1 { font-size: 1.6em; margin: 0; }
+        .header p { font-size: 0.8em; opacity: 0.8; margin-top: 3px; }
+        .main-container { display: flex; flex: 1; overflow: hidden; }
+        .earth-viewer { flex: 1; position: relative; background: #000814; }
+        #canvas-container { width: 100%; height: 100%; }
+        .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 1.2em; background: rgba(0, 0, 0, 0.7); padding: 20px 40px; border-radius: 10px; }
+        .sidebar { width: 340px; background: #f8f9fa; overflow-y: auto; padding: 15px; border-left: 2px solid #cbd5e0; }
+        .control-section { background: white; border-radius: 8px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); }
+        .control-section h3 { font-size: 0.95em; margin-bottom: 10px; color: #1a2332; border-bottom: 2px solid #2c5282; padding-bottom: 5px; }
+        .control-group { margin-bottom: 10px; }
+        .control-group:last-child { margin-bottom: 0; }
+        .control-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #2c3e50; font-size: 0.8em; }
+        .button-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        button { padding: 8px 14px; border: none; border-radius: 5px; font-size: 0.8em; font-weight: 600; cursor: pointer; transition: all 0.3s; flex: 1; min-width: 90px; }
+        button:hover { transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0,0,0,0.2); }
+        .btn-primary { background: #2c5282; color: white; }
+        .btn-primary:hover { background: #2a4365; }
+        .btn-secondary { background: #4a5568; color: white; }
+        .btn-secondary:hover { background: #2d3748; }
+        .btn-success { background: #2d5f8d; color: white; }
+        .btn-success:hover { background: #1e4266; }
+        .btn-active { background: #c53030; }
+        .btn-active:hover { background: #9b2c2c; }
+        .slider-container { display: flex; flex-direction: column; gap: 8px; }
+        .slider-row { display: flex; align-items: center; gap: 8px; }
+        input[type="range"] { flex: 1; height: 5px; border-radius: 3px; background: #cbd5e0; outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #2c5282; cursor: pointer; transition: all 0.3s; }
+        input[type="range"]::-webkit-slider-thumb:hover { background: #2a4365; transform: scale(1.2); }
+        input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #2c5282; cursor: pointer; border: none; }
+        .month-display { font-size: 1.3em; font-weight: 700; color: #2c5282; min-width: 50px; text-align: center; }
+        input[type="number"] { padding: 6px; border: 2px solid #cbd5e0; border-radius: 5px; font-size: 0.8em; width: 60px; text-align: center; }
+        input[type="number"]:focus { outline: none; border-color: #2c5282; }
+        .month-labels { display: flex; justify-content: space-between; font-size: 0.7em; color: #4a5568; margin-top: 3px; }
+        .info-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #e9ecef; font-size: 0.85em; }
+        .info-item:last-child { border-bottom: none; }
+        .info-item strong { color: #2c3e50; }
+        .info-item span { color: #4a5568; font-weight: 600; }
+        .legend-item { display: flex; align-items: center; margin: 6px 0; }
+        .legend-color { width: 24px; height: 16px; border-radius: 3px; margin-right: 8px; flex-shrink: 0; }
+        .legend-item span { font-size: 0.75em; color: #2c3e50; line-height: 1.3; }
     </style>
 </head>
 <body>
@@ -284,648 +55,99 @@
         <h1>🌍 대기대순환 시뮬레이터</h1>
         <p>지구의 대기 순환과 ITCZ의 계절별 변화를 관찰하세요</p>
     </div>
-    
     <div class="main-container">
         <div class="earth-viewer">
-            <div id="canvas-container">
-                <div class="loading">지구 텍스처 로딩 중...</div>
-            </div>
+            <div id="canvas-container"><div class="loading">지구 텍스처 로딩 중...</div></div>
         </div>
-        
         <div class="sidebar">
-            <!-- 월별 시뮬레이션 -->
             <div class="control-section">
                 <h3>📅 월별 시뮬레이션</h3>
                 <div class="control-group">
                     <div class="slider-container">
                         <div class="slider-row">
                             <div class="month-display" id="month-display">1월</div>
-                            <input type="range" id="month-slider" min="1" max="12" value="1" 
-                                   oninput="updateMonth(this.value)">
-                            <input type="number" id="month-input" min="1" max="12" value="1" 
-                                   onchange="updateMonth(this.value)" onkeypress="handleEnter(event)">
+                            <input type="range" id="month-slider" min="1" max="12" value="1" oninput="updateMonth(this.value)">
+                            <input type="number" id="month-input" min="1" max="12" value="1" onchange="updateMonth(this.value)" onkeypress="handleEnter(event)">
                         </div>
-                        <div class="month-labels">
-                            <span>1월</span>
-                            <span>6월</span>
-                            <span>12월</span>
-                        </div>
+                        <div class="month-labels"><span>1월</span><span>6월</span><span>12월</span></div>
                     </div>
                 </div>
             </div>
-            
-            <!-- 컨트롤 버튼 -->
             <div class="control-section">
                 <h3>⚙️ 컨트롤</h3>
-                
                 <div class="control-group">
                     <label>지구 기울기</label>
                     <div class="button-group">
-                        <button id="btn-upright" class="btn-secondary" onclick="switchTilt('upright')">정북 방향</button>
-                        <button id="btn-tilted" class="btn-primary" onclick="switchTilt('tilted')">23.5° 기울임</button>
+                        <button id="btn-upright" class="btn-secondary" onclick="switchTilt('upright')">정북</button>
+                        <button id="btn-tilted" class="btn-primary" onclick="switchTilt('tilted')">23.5°</button>
                     </div>
                 </div>
-                
                 <div class="control-group">
-                    <label>순환 Cell 표시</label>
+                    <label>순환 Cell & 지구 자전</label>
                     <div class="button-group">
-                        <button id="btn-cells" class="btn-primary" onclick="toggleCells()">순환 표시</button>
+                        <button id="btn-cells" class="btn-primary" onclick="toggleCells()">Cell 표시</button>
+                        <button id="btn-rotation" class="btn-primary" onclick="toggleRotation()">자전 중</button>
                     </div>
                 </div>
-                
                 <div class="control-group">
-                    <label>재생 컨트롤</label>
+                    <label>재생</label>
                     <div class="button-group">
                         <button id="btn-play" class="btn-success" onclick="togglePlay()">▶ 재생</button>
                         <button class="btn-secondary" onclick="resetMonth()">↺ 초기화</button>
                     </div>
                 </div>
             </div>
-            
-            <!-- 현재 상태 -->
             <div class="control-section">
                 <h3>📊 현재 상태</h3>
-                <div class="info-item">
-                    <strong>월:</strong>
-                    <span id="info-month">1월</span>
-                </div>
-                <div class="info-item">
-                    <strong>ITCZ 위치:</strong>
-                    <span id="info-itcz">-</span>
-                </div>
-                <div class="info-item">
-                    <strong>지구 기울기:</strong>
-                    <span id="info-tilt">23.5° 기울임</span>
-                </div>
+                <div class="info-item"><strong>월:</strong><span id="info-month">1월</span></div>
+                <div class="info-item"><strong>ITCZ:</strong><span id="info-itcz">-</span></div>
+                <div class="info-item"><strong>기울기:</strong><span id="info-tilt">23.5° 기울임</span></div>
             </div>
-            
-            <!-- 범례 -->
             <div class="control-section">
                 <h3>🎨 범례</h3>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #f39c12;"></div>
-                    <span>무역풍 (동→서, 적도 수렴)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #3498db;"></div>
-                    <span>편서풍 (서→동)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #2ecc71;"></div>
-                    <span>극동풍 (동→서)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background-color: #e74c3c;"></div>
-                    <span>ITCZ (적도수렴대)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, rgba(255,140,0,0.3), rgba(255,140,0,0.6));"></div>
-                    <span>해들리 순환 (Hadley Cell)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, rgba(52,152,219,0.3), rgba(52,152,219,0.6));"></div>
-                    <span>페렐 순환 (Ferrel Cell)</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background: linear-gradient(90deg, rgba(46,204,113,0.3), rgba(46,204,113,0.6));"></div>
-                    <span>극순환 (Polar Cell)</span>
-                </div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #f44336;"></div><span>무역풍</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #ff9800;"></div><span>편서풍</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #ffeb3b;"></div><span>극동풍</span></div>
+                <div class="legend-item"><div class="legend-color" style="background-color: #e74c3c;"></div><span>ITCZ</span></div>
+                <div class="legend-item"><div class="legend-color" style="background: linear-gradient(90deg, rgba(255,140,0,0.3), rgba(255,140,0,0.6));"></div><span>해들리 순환</span></div>
             </div>
         </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        let scene, camera, renderer;
-        let earthGroup, globe;
-        let currentMonth = 1;
-        let targetMonth = 1;
-        let animationProgress = 0;
-        let currentTilt = 'tilted';
-        let isPlaying = false;
-        let playInterval;
-        let showCells = true;
-        let earthTexture = null;
-        let textureLoaded = false;
+let scene,camera,renderer,earthGroup,globe,currentMonth=1,targetMonth=1,animationProgress=0,currentTilt='tilted',isPlaying=false,playInterval,showCells=true,isRotating=true,earthTexture=null,textureLoaded=false,animationOffset=0;
+let hadleyArrows=[];
+let arrowImages={trade:[],westerly:[],polar:[]};
+let imagesLoaded=false;
 
-        function removeLoadingMessage() {
-            const loading = document.querySelector('.loading');
-            if (loading) {
-                loading.remove();
-            }
-        }
-
-        function initThreeJS() {
-            const container = document.getElementById('canvas-container');
-            
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x000814);
-            
-            camera = new THREE.PerspectiveCamera(
-                45,
-                container.clientWidth / container.clientHeight,
-                0.1,
-                1000
-            );
-            camera.position.z = 3;
-            
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.innerHTML = '';
-            container.appendChild(renderer.domElement);
-            
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
-            scene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
-            directionalLight.position.set(5, 3, 5);
-            scene.add(directionalLight);
-            
-            createStars();
-            loadEarthTexture();
-            
-            // 마우스 컨트롤
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            
-            container.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-            
-            container.addEventListener('mousemove', (e) => {
-                if (isDragging && earthGroup) {
-                    const deltaX = e.clientX - previousMousePosition.x;
-                    const deltaY = e.clientY - previousMousePosition.y;
-                    
-                    earthGroup.rotation.y += deltaX * 0.005;
-                    earthGroup.rotation.x += deltaY * 0.005;
-                    
-                    earthGroup.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, earthGroup.rotation.x));
-                    
-                    previousMousePosition = { x: e.clientX, y: e.clientY };
-                }
-            });
-            
-            container.addEventListener('mouseup', () => {
-                isDragging = false;
-            });
-            
-            container.addEventListener('mouseleave', () => {
-                isDragging = false;
-            });
-            
-            // 휠 줌
-            container.addEventListener('wheel', (e) => {
-                e.preventDefault();
-                camera.position.z += e.deltaY * 0.001;
-                camera.position.z = Math.max(1.5, Math.min(5, camera.position.z));
-            });
-            
-            animate();
-        }
-        
-        function createStars() {
-            const starGeometry = new THREE.BufferGeometry();
-            const starVertices = [];
-            
-            for (let i = 0; i < 10000; i++) {
-                const x = (Math.random() - 0.5) * 2000;
-                const y = (Math.random() - 0.5) * 2000;
-                const z = (Math.random() - 0.5) * 2000;
-                starVertices.push(x, y, z);
-            }
-            
-            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
-            const stars = new THREE.Points(starGeometry, starMaterial);
-            scene.add(stars);
-        }
-        
-        function loadEarthTexture() {
-            const loader = new THREE.TextureLoader();
-            
-            const textures = [
-                'https://unpkg.com/three-globe@2.24.9/example/img/earth-day.jpg',
-                'https://unpkg.com/three-globe@2.24.9/example/img/earth-blue-marble.jpg',
-                'https://eoimages.gsfc.nasa.gov/images/imagerecords/73000/73909/world.topo.bathy.200412.3x5400x2700.jpg'
-            ];
-            
-            let currentIndex = 0;
-            
-            function tryLoadTexture() {
-                loader.load(
-                    textures[currentIndex],
-                    (texture) => {
-                        earthTexture = texture;
-                        textureLoaded = true;
-                        removeLoadingMessage();
-                        createGlobe();
-                    },
-                    undefined,
-                    (error) => {
-                        console.error(`텍스처 ${currentIndex} 로딩 실패:`, error);
-                        currentIndex++;
-                        if (currentIndex < textures.length) {
-                            tryLoadTexture();
-                        } else {
-                            textureLoaded = true;
-                            removeLoadingMessage();
-                            createGlobe();
-                        }
-                    }
-                );
-            }
-            
-            tryLoadTexture();
-        }
-        
-        function createGlobe() {
-            let currentRotationY = 0;
-            let currentRotationX = 0;
-            if (earthGroup) {
-                currentRotationY = earthGroup.rotation.y;
-                currentRotationX = earthGroup.rotation.x;
-                scene.remove(earthGroup);
-            }
-            
-            earthGroup = new THREE.Group();
-            
-            const geometry = new THREE.SphereGeometry(1, 64, 64);
-            
-            let material;
-            if (earthTexture) {
-                material = new THREE.MeshPhongMaterial({
-                    map: earthTexture,
-                    transparent: false,
-                    shininess: 5
-                });
-            } else {
-                material = new THREE.MeshPhongMaterial({
-                    color: 0x2233ff,
-                    transparent: false
-                });
-            }
-            
-            globe = new THREE.Mesh(geometry, material);
-            earthGroup.add(globe);
-            
-            createCirculationOverlay();
-            
-            if (showCells) {
-                addCirculationCells();
-            }
-            
-            earthGroup.rotation.z = currentTilt === 'tilted' ? 23.5 * Math.PI / 180 : 0;
-            earthGroup.rotation.y = currentRotationY;
-            earthGroup.rotation.x = currentRotationX;
-            
-            scene.add(earthGroup);
-        }
-        
-        function createCirculationOverlay() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 2048;
-            canvas.height = 1024;
-            const ctx = canvas.getContext('2d');
-            
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            drawAtmosphericCirculation(ctx, canvas.width, canvas.height);
-            
-            const texture = new THREE.CanvasTexture(canvas);
-            const material = new THREE.MeshBasicMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 0.85,
-                depthWrite: false
-            });
-            
-            const geometry = new THREE.SphereGeometry(1.01, 64, 64);
-            const overlay = new THREE.Mesh(geometry, material);
-            earthGroup.add(overlay);
-        }
-        
-        function drawAtmosphericCirculation(ctx, width, height) {
-            const itczLatitude = calculateITCZLatitude(currentMonth);
-            const itczY = height * (0.5 - itczLatitude / 90 * 0.5);
-            
-            updateITCZInfo(itczLatitude);
-            
-            const lat30N = height * (0.5 - (itczLatitude + 30) / 90 * 0.5);
-            const lat30S = height * (0.5 - (itczLatitude - 30) / 90 * 0.5);
-            const lat60N = height * (0.5 - (itczLatitude + 60) / 90 * 0.5);
-            const lat60S = height * (0.5 - (itczLatitude - 60) / 90 * 0.5);
-            
-            // ITCZ 표시
-            ctx.strokeStyle = 'rgba(231, 76, 60, 1)';
-            ctx.lineWidth = 6;
-            ctx.setLineDash([20, 10]);
-            ctx.beginPath();
-            ctx.moveTo(0, itczY);
-            ctx.lineTo(width, itczY);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            
-            // 위도선
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 2;
-            
-            for (let lat = -90; lat <= 90; lat += 30) {
-                const y = height * (0.5 - (itczLatitude + lat) / 90 * 0.5);
-                ctx.beginPath();
-                ctx.moveTo(0, y);
-                ctx.lineTo(width, y);
-                ctx.stroke();
-            }
-            
-            const poleN = height * (0.5 - (itczLatitude + 85) / 90 * 0.5);
-            const poleS = height * (0.5 - (itczLatitude - 85) / 90 * 0.5);
-            
-            drawTradeWinds(ctx, width, itczY, lat30N, lat30S);
-            drawWesterlies(ctx, width, lat30N, lat30S, lat60N, lat60S);
-            drawPolarEasterlies(ctx, width, lat60N, lat60S, poleN, poleS);
-        }
-        
-        function addCirculationCells() {
-            const itczLatitude = calculateITCZLatitude(currentMonth);
-            
-            createTorusCell(itczLatitude, 30, 0xff8c00, 'hadley-north');
-            createTorusCell(itczLatitude, -30, 0xff8c00, 'hadley-south');
-            
-            createTorusCell(30, 60, 0x3498db, 'ferrel-north');
-            createTorusCell(-30, -60, 0x3498db, 'ferrel-south');
-            
-            createTorusCell(60, 90, 0x2ecc71, 'polar-north');
-            createTorusCell(-60, -90, 0x2ecc71, 'polar-south');
-        }
-        
-        function createTorusCell(lat1, lat2, color, name) {
-            const centerLat = (lat1 + lat2) / 2;
-            const majorRadius = 1.25;
-            const minorRadius = 0.15;
-            
-            const geometry = new THREE.TorusGeometry(
-                majorRadius * Math.cos(centerLat * Math.PI / 180),
-                minorRadius,
-                16,
-                50
-            );
-            
-            const material = new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.25,
-                side: THREE.DoubleSide
-            });
-            
-            const torus = new THREE.Mesh(geometry, material);
-            
-            torus.position.y = majorRadius * Math.sin(centerLat * Math.PI / 180);
-            torus.rotation.x = Math.PI / 2;
-            
-            if (centerLat > 0) {
-                torus.rotation.z = centerLat * Math.PI / 180 * 0.3;
-            } else {
-                torus.rotation.z = centerLat * Math.PI / 180 * 0.3;
-            }
-            
-            const wireframe = new THREE.WireframeGeometry(geometry);
-            const lineMaterial = new THREE.LineBasicMaterial({ 
-                color: color, 
-                transparent: true, 
-                opacity: 0.4,
-                linewidth: 1
-            });
-            const line = new THREE.LineSegments(wireframe, lineMaterial);
-            torus.add(line);
-            
-            earthGroup.add(torus);
-        }
-        
-        function calculateITCZLatitude(month) {
-            let effectiveMonth = month;
-            
-            if (isPlaying && animationProgress > 0 && animationProgress < 1) {
-                const prevMonth = currentMonth;
-                let nextMonth = targetMonth;
-                
-                if (prevMonth === 12 && nextMonth === 1) {
-                    nextMonth = 13;
-                }
-                else if (prevMonth === 1 && nextMonth === 12) {
-                    effectiveMonth = 1 - (1 - 0) * animationProgress;
-                    const angle = 2 * Math.PI * (effectiveMonth - 3) / 12;
-                    return 23.5 * Math.sin(angle);
-                }
-                
-                effectiveMonth = prevMonth + (nextMonth - prevMonth) * animationProgress;
-            }
-            
-            const angle = 2 * Math.PI * (effectiveMonth - 3) / 12;
-            return 23.5 * Math.sin(angle);
-        }
-        
-        function updateITCZInfo(latitude) {
-            const latStr = latitude >= 0 
-                ? `북위 ${latitude.toFixed(1)}°` 
-                : `남위 ${Math.abs(latitude).toFixed(1)}°`;
-            document.getElementById('info-itcz').textContent = latStr;
-        }
-        
-        function drawTradeWinds(ctx, width, itczY, lat30N, lat30S) {
-            const arrowSpacing = width / 20;
-            const numArrows = 20;
-            
-            for (let i = 0; i < numArrows; i++) {
-                const x = i * arrowSpacing + arrowSpacing / 2;
-                
-                const startY_N = (lat30N + itczY) / 2 - 40;
-                const endY_N = (lat30N + itczY) / 2 + 20;
-                drawCurvedArrow(ctx, x + 50, startY_N, x - 10, endY_N, -30, '#f39c12', 3);
-                
-                const startY_S = (lat30S + itczY) / 2 + 40;
-                const endY_S = (lat30S + itczY) / 2 - 20;
-                drawCurvedArrow(ctx, x + 50, startY_S, x - 10, endY_S, 30, '#f39c12', 3);
-            }
-        }
-        
-        function drawWesterlies(ctx, width, lat30N, lat30S, lat60N, lat60S) {
-            const arrowSpacing = width / 20;
-            const numArrows = 20;
-            
-            for (let i = 0; i < numArrows; i++) {
-                const x = i * arrowSpacing + arrowSpacing / 2;
-                
-                const midY_N = (lat30N + lat60N) / 2;
-                drawCurvedArrow(ctx, x - 40, midY_N + 10, x + 40, midY_N - 20, -25, '#3498db', 3);
-                
-                const midY_S = (lat30S + lat60S) / 2;
-                drawCurvedArrow(ctx, x - 40, midY_S - 10, x + 40, midY_S + 20, 25, '#3498db', 3);
-            }
-        }
-        
-        function drawPolarEasterlies(ctx, width, lat60N, lat60S, poleN, poleS) {
-            const arrowSpacing = width / 20;
-            const numArrows = 20;
-            
-            for (let i = 0; i < numArrows; i++) {
-                const x = i * arrowSpacing + arrowSpacing / 2;
-                
-                const midY_N = (lat60N + poleN) / 2;
-                drawCurvedArrow(ctx, x + 40, midY_N - 10, x - 20, midY_N + 20, -20, '#2ecc71', 3);
-                
-                const midY_S = (lat60S + poleS) / 2;
-                drawCurvedArrow(ctx, x + 40, midY_S + 10, x - 20, midY_S - 20, 20, '#2ecc71', 3);
-            }
-        }
-        
-        function drawCurvedArrow(ctx, x1, y1, x2, y2, curvature, color, lineWidth) {
-            ctx.strokeStyle = color;
-            ctx.fillStyle = color;
-            ctx.lineWidth = lineWidth;
-            
-            const midX = (x1 + x2) / 2;
-            const midY = (y1 + y2) / 2;
-            const controlX = midX + curvature;
-            const controlY = midY;
-            
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.quadraticCurveTo(controlX, controlY, x2, y2);
-            ctx.stroke();
-            
-            const t = 0.95;
-            const derivX = 2 * (1 - t) * (controlX - x1) + 2 * t * (x2 - controlX);
-            const derivY = 2 * (1 - t) * (controlY - y1) + 2 * t * (y2 - controlY);
-            const angle = Math.atan2(derivY, derivX);
-            
-            const arrowLength = 10;
-            
-            ctx.beginPath();
-            ctx.moveTo(x2, y2);
-            ctx.lineTo(x2 - arrowLength * Math.cos(angle - Math.PI / 6), y2 - arrowLength * Math.sin(angle - Math.PI / 6));
-            ctx.lineTo(x2 - arrowLength * Math.cos(angle + Math.PI / 6), y2 - arrowLength * Math.sin(angle + Math.PI / 6));
-            ctx.closePath();
-            ctx.fill();
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (isPlaying && targetMonth !== currentMonth) {
-                animationProgress += 0.02;
-                
-                if (animationProgress >= 1.0) {
-                    currentMonth = targetMonth;
-                    if (currentMonth > 12) currentMonth = 1;
-                    animationProgress = 0;
-                    createGlobe();
-                } else {
-                    createGlobe();
-                }
-            }
-            
-            if (earthGroup) {
-                earthGroup.rotation.y += 0.001;
-            }
-            
-            if (renderer && scene && camera) {
-                renderer.render(scene, camera);
-            }
-        }
-        
-        function updateMonth(value) {
-            const newMonth = parseInt(value);
-            
-            if (isPlaying) {
-                targetMonth = newMonth;
-                animationProgress = 0;
-            } else {
-                currentMonth = newMonth;
-                targetMonth = newMonth;
-                animationProgress = 0;
-                createGlobe();
-            }
-            
-            document.getElementById('month-slider').value = newMonth;
-            document.getElementById('month-input').value = newMonth;
-            document.getElementById('month-display').textContent = `${newMonth}월`;
-            document.getElementById('info-month').textContent = `${newMonth}월`;
-        }
-        
-        function handleEnter(event) {
-            if (event.key === 'Enter') updateMonth(event.target.value);
-        }
-
-        function switchTilt(tilt) {
-            currentTilt = tilt;
-            document.getElementById('btn-upright').className = tilt === 'upright' ? 'btn-primary' : 'btn-secondary';
-            document.getElementById('btn-tilted').className = tilt === 'tilted' ? 'btn-primary' : 'btn-secondary';
-            document.getElementById('info-tilt').textContent = tilt === 'upright' ? '정북 방향' : '23.5° 기울임';
-            if (earthGroup) {
-                earthGroup.rotation.z = tilt === 'tilted' ? 23.5 * Math.PI / 180 : 0;
-            }
-        }
-
-        function toggleCells() {
-            showCells = !showCells;
-            const btn = document.getElementById('btn-cells');
-            if (showCells) {
-                btn.textContent = '순환 표시';
-                btn.className = 'btn-primary';
-            } else {
-                btn.textContent = '순환 숨김';
-                btn.className = 'btn-secondary';
-            }
-            createGlobe();
-        }
-        
-        function togglePlay() {
-            isPlaying = !isPlaying;
-            const btn = document.getElementById('btn-play');
-            
-            if (isPlaying) {
-                btn.textContent = '⏸ 정지';
-                btn.className = 'btn-active';
-                
-                playInterval = setInterval(() => {
-                    if (animationProgress === 0) {
-                        targetMonth = (currentMonth % 12) + 1;
-                        updateMonth(targetMonth);
-                    }
-                }, 2000);
-            } else {
-                btn.textContent = '▶ 재생';
-                btn.className = 'btn-success';
-                clearInterval(playInterval);
-            }
-        }
-        
-        function resetMonth() {
-            updateMonth(1);
-        }
-        
-        window.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('btn-tilted').className = 'btn-primary';
-            document.getElementById('btn-upright').className = 'btn-secondary';
-        });
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => { initThreeJS(); });
-        } else {
-            initThreeJS();
-        }
-        
-        window.addEventListener('resize', () => {
-            if (renderer && camera) {
-                const container = document.getElementById('canvas-container');
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
-            }
-        });
+function removeLoadingMessage(){const l=document.querySelector('.loading');if(l)l.remove();}
+function loadArrowImages(){const baseUrls={trade:'https://via.placeholder.com/100x30/f44336/ffffff?text=Trade-',westerly:'https://via.placeholder.com/100x30/ff9800/ffffff?text=West-',polar:'https://via.placeholder.com/100x30/ffeb3b/000000?text=Polar-'};let loadedCount=0;const totalImages=36;Object.keys(baseUrls).forEach(type=>{for(let month=1;month<=12;month++){const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{loadedCount++;if(loadedCount===totalImages){imagesLoaded=true;}};img.onerror=()=>{loadedCount++;if(loadedCount===totalImages){imagesLoaded=true;}};img.src=baseUrls[type]+month;arrowImages[type][month-1]=img;}});}
+function initThreeJS(){const c=document.getElementById('canvas-container');scene=new THREE.Scene();scene.background=new THREE.Color(0x000814);camera=new THREE.PerspectiveCamera(45,c.clientWidth/c.clientHeight,0.1,1000);camera.position.z=3;renderer=new THREE.WebGLRenderer({antialias:true});renderer.setSize(c.clientWidth,c.clientHeight);renderer.setPixelRatio(window.devicePixelRatio);c.innerHTML='';c.appendChild(renderer.domElement);const aL=new THREE.AmbientLight(0xffffff,0.7);scene.add(aL);const dL=new THREE.DirectionalLight(0xffffff,0.6);dL.position.set(5,3,5);scene.add(dL);createStars();loadArrowImages();loadEarthTexture();let isDragging=false,prevMouse={x:0,y:0};c.addEventListener('mousedown',e=>{isDragging=true;prevMouse={x:e.clientX,y:e.clientY};});c.addEventListener('mousemove',e=>{if(isDragging&&earthGroup){const dX=e.clientX-prevMouse.x,dY=e.clientY-prevMouse.y;earthGroup.rotation.y+=dX*0.005;earthGroup.rotation.x+=dY*0.005;earthGroup.rotation.x=Math.max(-Math.PI/2,Math.min(Math.PI/2,earthGroup.rotation.x));prevMouse={x:e.clientX,y:e.clientY};}});c.addEventListener('mouseup',()=>{isDragging=false;});c.addEventListener('mouseleave',()=>{isDragging=false;});c.addEventListener('wheel',e=>{e.preventDefault();camera.position.z+=e.deltaY*0.001;camera.position.z=Math.max(1.5,Math.min(5,camera.position.z));});animate();}
+function createStars(){const g=new THREE.BufferGeometry(),v=[];for(let i=0;i<10000;i++){const x=(Math.random()-0.5)*2000,y=(Math.random()-0.5)*2000,z=(Math.random()-0.5)*2000;v.push(x,y,z);}g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));const m=new THREE.PointsMaterial({color:0xffffff,size:2});const s=new THREE.Points(g,m);scene.add(s);}
+function loadEarthTexture(){const l=new THREE.TextureLoader(),t=['https://unpkg.com/three-globe@2.24.9/example/img/earth-day.jpg','https://unpkg.com/three-globe@2.24.9/example/img/earth-blue-marble.jpg'];let idx=0;function tryLoad(){l.load(t[idx],tx=>{earthTexture=tx;textureLoaded=true;removeLoadingMessage();createGlobe();},undefined,err=>{idx++;if(idx<t.length)tryLoad();else{textureLoaded=true;removeLoadingMessage();createGlobe();}});}tryLoad();}
+function createGlobe(){let cRY=0,cRX=0;if(earthGroup){cRY=earthGroup.rotation.y;cRX=earthGroup.rotation.x;scene.remove(earthGroup);}hadleyArrows=[];earthGroup=new THREE.Group();const g=new THREE.SphereGeometry(1,64,64);let m;if(earthTexture)m=new THREE.MeshPhongMaterial({map:earthTexture,shininess:5});else m=new THREE.MeshPhongMaterial({color:0x2233ff});globe=new THREE.Mesh(g,m);earthGroup.add(globe);createCirculationOverlay();if(showCells)addHadleyCell();earthGroup.rotation.z=currentTilt==='tilted'?23.5*Math.PI/180:0;earthGroup.rotation.y=cRY;earthGroup.rotation.x=cRX;scene.add(earthGroup);}
+function createCirculationOverlay(){const cv=document.createElement('canvas');cv.width=2048;cv.height=1024;const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);drawAtmosphericCirculation(ctx,cv.width,cv.height);const tx=new THREE.CanvasTexture(cv);const m=new THREE.MeshBasicMaterial({map:tx,transparent:true,opacity:0.85,depthWrite:false});const g=new THREE.SphereGeometry(1.01,64,64);const o=new THREE.Mesh(g,m);earthGroup.add(o);}
+function drawAtmosphericCirculation(ctx,w,h){const iL=calculateITCZLatitude(currentMonth),iY=h*(0.5-iL/90*0.5);updateITCZInfo(iL);const l30N=h*(0.5-(iL+30)/90*0.5),l30S=h*(0.5-(iL-30)/90*0.5),l60N=h*(0.5-(iL+60)/90*0.5),l60S=h*(0.5-(iL-60)/90*0.5);ctx.strokeStyle='rgba(231,76,60,1)';ctx.lineWidth=6;ctx.setLineDash([20,10]);ctx.beginPath();ctx.moveTo(0,iY);ctx.lineTo(w,iY);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=2;for(let lat=-90;lat<=90;lat+=30){const y=h*(0.5-(iL+lat)/90*0.5);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}const pN=h*(0.5-(iL+85)/90*0.5),pS=h*(0.5-(iL-85)/90*0.5);drawTradeWinds(ctx,w,iY,l30N,l30S);drawWesterlies(ctx,w,iY,l30N,l30S,l60N,l60S);drawPolarEasterlies(ctx,w,iY,l60N,l60S,pN,pS);}
+function addHadleyCell(){const iL=calculateITCZLatitude(currentMonth),r=1.15;const phiN1=(90-Math.max(iL,30))*Math.PI/180,phiN2=(90-Math.min(iL,30))*Math.PI/180;const gN=new THREE.SphereGeometry(r,64,32,0,Math.PI*2,phiN1,phiN2-phiN1);const mN=new THREE.MeshBasicMaterial({color:0xff8c00,transparent:true,opacity:0.15,side:THREE.DoubleSide});const sN=new THREE.Mesh(gN,mN);const wN=new THREE.WireframeGeometry(gN);const lN=new THREE.LineSegments(wN,new THREE.LineBasicMaterial({color:0xff8c00,transparent:true,opacity:0.3}));sN.add(lN);earthGroup.add(sN);const phiS1=(90-Math.max(iL,-30))*Math.PI/180,phiS2=(90-Math.min(iL,-30))*Math.PI/180;const gS=new THREE.SphereGeometry(r,64,32,0,Math.PI*2,phiS1,phiS2-phiS1);const mS=new THREE.MeshBasicMaterial({color:0xff8c00,transparent:true,opacity:0.15,side:THREE.DoubleSide});const sS=new THREE.Mesh(gS,mS);const wS=new THREE.WireframeGeometry(gS);const lS=new THREE.LineSegments(wS,new THREE.LineBasicMaterial({color:0xff8c00,transparent:true,opacity:0.3}));sS.add(lS);earthGroup.add(sS);addHadleyCellArrows();}
+function addHadleyCellArrows(){const iL=calculateITCZLatitude(currentMonth),n=16;for(let i=0;i<n;i++){const a=(i/n)*Math.PI*2;addCirculationArrow3D(a,iL,30,0xff8c00);addCirculationArrow3D(a,iL,-30,0xff8c00);}}
+function addCirculationArrow3D(angle,lat1,lat2,color){const pts=[],s=40;const itczLat=lat1;const highLat=lat2;for(let i=0;i<=s/4;i++){const t=i/(s/4),r=1.0+t*0.15,lat=itczLat,phi=(90-lat)*Math.PI/180,theta=angle;pts.push(new THREE.Vector3(r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)));}for(let i=0;i<=s/4;i++){const t=i/(s/4),lat=itczLat+(highLat-itczLat)*t,r=1.15,phi=(90-lat)*Math.PI/180,theta=angle;pts.push(new THREE.Vector3(r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)));}for(let i=0;i<=s/4;i++){const t=i/(s/4),r=1.15-t*0.15,lat=highLat,phi=(90-lat)*Math.PI/180,theta=angle;pts.push(new THREE.Vector3(r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)));}for(let i=0;i<=s/4;i++){const t=i/(s/4),lat=highLat+(itczLat-highLat)*t,r=1.0,phi=(90-lat)*Math.PI/180,theta=angle;pts.push(new THREE.Vector3(r*Math.sin(phi)*Math.cos(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.sin(theta)));}const arrowHead=new THREE.ConeGeometry(0.02,0.06,8);const arrowMat=new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:0.9});const cone=new THREE.Mesh(arrowHead,arrowMat);earthGroup.add(cone);const tailSpheres=[];for(let i=0;i<20;i++){const sphereGeom=new THREE.SphereGeometry(0.008,8,8);const sphereMat=new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:0.85});const sphere=new THREE.Mesh(sphereGeom,sphereMat);sphere.visible=false;earthGroup.add(sphere);tailSpheres.push(sphere);}hadleyArrows.push({points:pts,cone:cone,tailSpheres:tailSpheres,progress:Math.random(),totalLength:pts.length});}
+function calculateITCZLatitude(month){let eM=month;if(isPlaying&&animationProgress>0&&animationProgress<1){const pM=currentMonth;let nM=targetMonth;if(pM===12&&nM===1)nM=13;else if(pM===1&&nM===12){eM=1-(1-0)*animationProgress;const a=2*Math.PI*(eM-3)/12;return 23.5*Math.sin(a);}eM=pM+(nM-pM)*animationProgress;}const a=2*Math.PI*(eM-3)/12;return 23.5*Math.sin(a);}
+function updateITCZInfo(lat){const s=lat>=0?`북위 ${lat.toFixed(1)}°`:`남위 ${Math.abs(lat).toFixed(1)}°`;document.getElementById('info-itcz').textContent=s;}
+function drawTradeWinds(ctx,w,iY,l30N,l30S){if(!imagesLoaded)return;const monthIdx=currentMonth-1;const tradeImg=arrowImages.trade[monthIdx];if(!tradeImg||!tradeImg.complete)return;const sp=w/20,n=20;for(let i=0;i<n;i++){const x=i*sp+sp/2;const yN=(l30N+iY)/2;ctx.save();ctx.translate(x,yN);ctx.drawImage(tradeImg,-50,-15,100,30);ctx.restore();const yS=(l30S+iY)/2;ctx.save();ctx.translate(x,yS);ctx.scale(1,-1);ctx.drawImage(tradeImg,-50,-15,100,30);ctx.restore();}}
+function drawWesterlies(ctx,w,iY,l30N,l30S,l60N,l60S){if(!imagesLoaded)return;const monthIdx=currentMonth-1;const westerlyImg=arrowImages.westerly[monthIdx];if(!westerlyImg||!westerlyImg.complete)return;const sp=w/20,n=20;for(let i=0;i<n;i++){const x=i*sp+sp/2;const yN=(l30N+l60N)/2;ctx.save();ctx.translate(x,yN);ctx.drawImage(westerlyImg,-50,-15,100,30);ctx.restore();const yS=(l30S+l60S)/2;ctx.save();ctx.translate(x,yS);ctx.scale(1,-1);ctx.drawImage(westerlyImg,-50,-15,100,30);ctx.restore();}}
+function drawPolarEasterlies(ctx,w,iY,l60N,l60S,pN,pS){if(!imagesLoaded)return;const monthIdx=currentMonth-1;const polarImg=arrowImages.polar[monthIdx];if(!polarImg||!polarImg.complete)return;const sp=w/20,n=20;for(let i=0;i<n;i++){const x=i*sp+sp/2;const yN=(l60N+pN)/2;ctx.save();ctx.translate(x,yN);ctx.rotate(Math.PI);ctx.drawImage(polarImg,-50,-15,100,30);ctx.restore();const yS=(l60S+pS)/2;ctx.save();ctx.translate(x,yS);ctx.rotate(Math.PI);ctx.scale(1,-1);ctx.drawImage(polarImg,-50,-15,100,30);ctx.restore();}}
+function drawCurvedArrow(ctx,x1,y1,x2,y2,curv,color,lw){ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=lw;const mX=(x1+x2)/2,mY=(y1+y2)/2,cX=mX+curv,cY=mY;const dL=15,gL=10;ctx.setLineDash([dL,gL]);ctx.lineDashOffset=-animationOffset;ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(cX,cY,x2,y2);ctx.stroke();ctx.setLineDash([]);const t=0.95,dX=2*(1-t)*(cX-x1)+2*t*(x2-cX),dY=2*(1-t)*(cY-y1)+2*t*(y2-cY),angle=Math.atan2(dY,dX),aL=12;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-aL*Math.cos(angle-Math.PI/6),y2-aL*Math.sin(angle-Math.PI/6));ctx.lineTo(x2-aL*Math.cos(angle+Math.PI/6),y2-aL*Math.sin(angle+Math.PI/6));ctx.closePath();ctx.fill();}
+function animate(){requestAnimationFrame(animate);animationOffset+=0.5;if(animationOffset>25)animationOffset=0;if(earthGroup&&earthGroup.children[1]){const overlay=earthGroup.children[1];const cv=document.createElement('canvas');cv.width=2048;cv.height=1024;const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);drawAtmosphericCirculation(ctx,cv.width,cv.height);const tx=new THREE.CanvasTexture(cv);overlay.material.map=tx;overlay.material.needsUpdate=true;}hadleyArrows.forEach(arr=>{arr.progress+=0.003;if(arr.progress>1)arr.progress=0;const idx=Math.floor(arr.progress*arr.totalLength);if(idx<arr.totalLength&&idx>=0){arr.cone.position.copy(arr.points[idx]);arr.cone.visible=true;if(idx>0){const dir=new THREE.Vector3().subVectors(arr.points[idx],arr.points[idx-1]).normalize();const axis=new THREE.Vector3(0,1,0);arr.cone.quaternion.setFromUnitVectors(axis,dir);}arr.tailSpheres.forEach((sphere,i)=>{const tIdx=idx-i*2-1;if(tIdx>=0&&tIdx<arr.totalLength){sphere.position.copy(arr.points[tIdx]);sphere.visible=true;}else{sphere.visible=false;}});}else{arr.cone.visible=false;arr.tailSpheres.forEach(s=>s.visible=false);}});if(isPlaying&&targetMonth!==currentMonth){animationProgress+=0.02;if(animationProgress>=1.0){currentMonth=targetMonth;if(currentMonth>12)currentMonth=1;animationProgress=0;createGlobe();}else{createGlobe();}}if(earthGroup&&isRotating)earthGroup.rotation.y+=0.001;if(renderer&&scene&&camera)renderer.render(scene,camera);}
+function updateMonth(v){const nM=parseInt(v);if(isPlaying){targetMonth=nM;animationProgress=0;}else{currentMonth=nM;targetMonth=nM;animationProgress=0;createGlobe();}document.getElementById('month-slider').value=nM;document.getElementById('month-input').value=nM;document.getElementById('month-display').textContent=`${nM}월`;document.getElementById('info-month').textContent=`${nM}월`;}
+function handleEnter(e){if(e.key==='Enter')updateMonth(e.target.value);}
+function switchTilt(t){currentTilt=t;document.getElementById('btn-upright').className=t==='upright'?'btn-primary':'btn-secondary';document.getElementById('btn-tilted').className=t==='tilted'?'btn-primary':'btn-secondary';document.getElementById('info-tilt').textContent=t==='upright'?'정북 방향':'23.5° 기울임';if(earthGroup)earthGroup.rotation.z=t==='tilted'?23.5*Math.PI/180:0;}
+function toggleCells(){showCells=!showCells;const btn=document.getElementById('btn-cells');if(showCells){btn.textContent='Cell 표시';btn.className='btn-primary';}else{btn.textContent='Cell 숨김';btn.className='btn-secondary';}createGlobe();}
+function toggleRotation(){isRotating=!isRotating;const btn=document.getElementById('btn-rotation');if(isRotating){btn.textContent='자전 중';btn.className='btn-primary';}else{btn.textContent='정지 중';btn.className='btn-secondary';}}
+function togglePlay(){isPlaying=!isPlaying;const btn=document.getElementById('btn-play');if(isPlaying){btn.textContent='⏸ 정지';btn.className='btn-active';playInterval=setInterval(()=>{if(animationProgress===0){targetMonth=(currentMonth%12)+1;updateMonth(targetMonth);}},2000);}else{btn.textContent='▶ 재생';btn.className='btn-success';clearInterval(playInterval);}}
+function resetMonth(){updateMonth(1);}
+window.addEventListener('DOMContentLoaded',()=>{document.getElementById('btn-tilted').className='btn-primary';document.getElementById('btn-upright').className='btn-secondary';});
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',()=>{initThreeJS();});}else{initThreeJS();}
+window.addEventListener('resize',()=>{if(renderer&&camera){const c=document.getElementById('canvas-container');camera.aspect=c.clientWidth/c.clientHeight;camera.updateProjectionMatrix();renderer.setSize(c.clientWidth,c.clientHeight);}});
     </script>
 </body>
 </html>
